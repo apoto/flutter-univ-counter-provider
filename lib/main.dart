@@ -49,18 +49,36 @@ class MyHomePage extends StatelessWidget {
             Text(
               'You have pushed the button this many times:',
             ),
-            Number()
+            Number(),
+            Number2(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final model = context.read<CountModel>();
-          model.incrementCounter();
-          model.updateColor();
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                final model = context.read<CountModel>();
+                model.incrementCounter();
+                model.updateColor();
+              },
+              tooltip: 'Increment',
+              child: const Text('Num1'),
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton(
+              onPressed: () {
+                final model = context.read<CountModel>();
+                model.incrementCounter2();
+              },
+              tooltip: 'Increment',
+              child: const Text('Num2'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -71,15 +89,34 @@ class Number extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counter = context.select<CountModel, int>((model) => model.counter);
-    final color = context.select<CountModel, Color>((model) => model.color);
+    print('Built Number1');
+    final model = context.watch<CountModel>();
 
     return Text(
-      '$counter',
+      '${model.counter}',
       style: TextStyle(
         fontSize: 160,
         fontWeight: FontWeight.bold,
-        color: color,
+        color: model.color,
+      ),
+    );
+  }
+}
+
+class Number2 extends StatelessWidget {
+  const Number2({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    print('Built Number2');
+    final counter = context.select<CountModel, int>((model) => model.counter2);
+
+    return Text(
+      '$counter',
+      style: const TextStyle(
+        fontSize: 160,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
       ),
     );
   }
