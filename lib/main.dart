@@ -3,13 +3,16 @@ import 'package:flutter_univ_counter_provider/count_model.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CountModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,46 +21,57 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CountModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text('カウンター'),
+    final model = context.watch<CountModel>();
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('カウンター'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'You have pushed the button this many times:',
+            ),
+            Number(model: model)
+          ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'You have pushed the button this many times:',
-              ),
-              Consumer<CountModel>(builder: (context, model, child) {
-                return Text(
-                  '${model.counter}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                );
-              }),
-            ],
-          ),
-        ),
-        floatingActionButton: Consumer<CountModel>(
-          builder: (context, model, child) {
-            return FloatingActionButton(
-              onPressed: () => model.incrementCounter(),
-              tooltip: 'Increment',
-              child: const Icon(Icons.add),
-            );
-          },
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          model.incrementCounter();
+          model.updateColor();
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class Number extends StatelessWidget {
+  final CountModel model;
+  const Number({super.key, required this.model});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '${model.counter}',
+      style: TextStyle(
+        fontSize: 160,
+        fontWeight: FontWeight.bold,
+        color: model.color,
       ),
     );
   }
