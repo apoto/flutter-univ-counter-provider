@@ -15,5 +15,6 @@ class CountModel extends ChangeNotifier {
     color = Color(
       (Random().nextDouble() * 0xFFFFFF).toInt() << 0,
     ).withOpacity(1.0);
+    notifyListeners();
   }
 }

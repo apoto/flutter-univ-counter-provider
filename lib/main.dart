@@ -30,26 +30,32 @@ class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<CountModel>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('カウンター'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                context.read<CountModel>().updateColor();
+              },
+              icon: const Icon(Icons.color_lens_outlined))
+        ],
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+            Text(
               'You have pushed the button this many times:',
             ),
-            Number(model: model)
+            Number()
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          final model = context.read<CountModel>();
           model.incrementCounter();
           model.updateColor();
         },
@@ -61,17 +67,19 @@ class MyHomePage extends StatelessWidget {
 }
 
 class Number extends StatelessWidget {
-  final CountModel model;
-  const Number({super.key, required this.model});
+  const Number({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final counter = context.select<CountModel, int>((model) => model.counter);
+    final color = context.select<CountModel, Color>((model) => model.color);
+
     return Text(
-      '${model.counter}',
+      '$counter',
       style: TextStyle(
         fontSize: 160,
         fontWeight: FontWeight.bold,
-        color: model.color,
+        color: color,
       ),
     );
   }
